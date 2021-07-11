@@ -10,24 +10,6 @@ import UIKit
 class ViewController: UIViewController {
     
     var pizzaBrain = PizzaBrain()
-    
-    var upgradesList = ["MammaMia": Upgrade(numberOwned: 0, speed: 1, initialPrice: 50),
-                        "Cutter": Upgrade(numberOwned: 0, speed: 5, initialPrice: 500),
-                        "Cook": Upgrade(numberOwned: 0, speed: 20, initialPrice: 3000)]
-    
-    var numOfPizzas: Int = 0
-    var pizzaPerSec: Int = 0
-    var timer = Timer()
-    var speedKeeperTimer = Timer()
-    var fireTimer = Timer()
-    var fireImages = [#imageLiteral(resourceName: "Fire1"), #imageLiteral(resourceName: "Fire2"), #imageLiteral(resourceName: "Fire3")]
-    var currentFireImage = 0
-    
-    var clicksPerSecond = 0
-    var pointsPerClick = 1
-    var averageClicksPerSecond = 0.0
-    
-    var fireIsOn: Bool = false
 
 
     // Top Outlets
@@ -65,15 +47,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(checkSpeed), userInfo: nil, repeats: true)
-        speedKeeperTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(calculateSpeed), userInfo: nil, repeats: true)
+        pizzaBrain.speedKeeperTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(calculateSpeed), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: 0.03, target: self, selector: #selector(rotateRays), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(raysAnimation), userInfo: nil, repeats: true)
     }
 
     @IBAction func pizzaPressed(_ sender: UIButton) {
-        numOfPizzas += pointsPerClick
-        numOfPizzasLabel.text = "\(numOfPizzas) Pizzas!"
-        clicksPerSecond += 1
+        pizzaBrain.incrementNumOfPizzasByClick()
+        numOfPizzasLabel.text = "\(pizzaBrain.getNumOfPizzas()) Pizzas!"
+        pizzaBrain.incrementClicksPerSecond()
         
         
         pizzaHeight.constant = 250
@@ -92,52 +74,46 @@ class ViewController: UIViewController {
     
     
     @IBAction func UpgradePressed(_ sender: UIButton) {
-        buyUpgrade(upgradeName: sender.currentTitle!)
-    }
-    
-    func buyUpgrade(upgradeName: String) {
-        let upgrade = upgradesList[upgradeName]
-        if numOfPizzas >= (upgrade?.currentPrice)! {
-            numOfPizzas -= (upgrade?.currentPrice)!
-            upgrade?.buy()
-            pizzaPerSec += (upgrade?.speed)!
-            updateUI()
-            updateTimer()
+        pizzaBrain.buyUpgrade(upgradeName: sender.currentTitle!)
+        updateUI()
+        pizzaBrain.timer.invalidate()
+        if pizzaBrain.getPizzaPerSec() > 0 {
+            pizzaBrain.timer = Timer.scheduledTimer(timeInterval: 1.0/Double(pizzaBrain.getPizzaPerSec()), target: self, selector: #selector(makePizzasAutomatically), userInfo: nil, repeats: true)
         }
     }
     
     func updateUI() {
-        numOfPizzasLabel.text = "\(numOfPizzas) Pizzas!"
-        pizzaPerSecLabel.text = "\(String(pizzaPerSec + clicksPerSecond*pointsPerClick)) / sec"
+        numOfPizzasLabel.text = "\(pizzaBrain.getNumOfPizzas()) Pizzas!"
+        pizzaPerSecLabel.text = pizzaBrain.generatePizzaPerSecLabel()
         
-        numberOfMammaMia.text = String((upgradesList["MammaMia"]?.numberOwned)!)
+        numberOfMammaMia.text = String((pizzaBrain.upgradesList["MammaMia"]?.numberOwned)!)
         
-        if String((upgradesList["MammaMia"]?.currentPrice)!).count > 3 {
-            mammaMiaPriceLabel.text = "\(String(format: "%.1f",(Double(upgradesList["MammaMia"]?.currentPrice ?? 0))/1000.0))k"
+        if String((pizzaBrain.upgradesList["MammaMia"]?.currentPrice)!).count > 3 {
+            mammaMiaPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList["MammaMia"]?.currentPrice ?? 0))/1000.0))k"
         } else {
-            mammaMiaPriceLabel.text = String((upgradesList["MammaMia"]?.currentPrice)!)
+            mammaMiaPriceLabel.text = String((pizzaBrain.upgradesList["MammaMia"]?.currentPrice)!)
         }
         
-        numberOfCutters.text = String((upgradesList["Cutter"]?.numberOwned)!)
-        if String((upgradesList["Cutter"]?.currentPrice)!).count > 3 {
-            cutterPriceLabel.text = "\(String(format: "%.1f",(Double(upgradesList["Cutter"]?.currentPrice ?? 0))/1000.0))k"
+        numberOfCutters.text = String((pizzaBrain.upgradesList["Cutter"]?.numberOwned)!)
+        if String((pizzaBrain.upgradesList["Cutter"]?.currentPrice)!).count > 3 {
+            cutterPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList["Cutter"]?.currentPrice ?? 0))/1000.0))k"
         } else {
-            cutterPriceLabel.text = String((upgradesList["Cutter"]?.currentPrice)!)
+            cutterPriceLabel.text = String((pizzaBrain.upgradesList["Cutter"]?.currentPrice)!)
         }
         
-        numberOfCook.text = String((upgradesList["Cook"]?.numberOwned)!)
-        if String((upgradesList["Cook"]?.currentPrice)!).count > 3 {
-            cookPriceLabel.text = "\(String(format: "%.1f",(Double(upgradesList["Cook"]?.currentPrice ?? 0))/1000.0))k"
+        numberOfCook.text = String((pizzaBrain.upgradesList["Cook"]?.numberOwned)!)
+        if String((pizzaBrain.upgradesList["Cook"]?.currentPrice)!).count > 3 {
+            cookPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList["Cook"]?.currentPrice ?? 0))/1000.0))k"
         } else {
-            cookPriceLabel.text = String((upgradesList["Cook"]?.currentPrice)!)
+            cookPriceLabel.text = String((pizzaBrain.upgradesList["Cook"]?.currentPrice)!)
         }
         
-        if (upgradesList["MammaMia"]?.numberOwned)! > 0 && cutterLock.isHidden == false {
+        if (pizzaBrain.upgradesList["MammaMia"]?.numberOwned)! > 0 && cutterLock.isHidden == false {
             cutterLock.isHidden = true
             numberOfCutters.isHidden = false
         }
         
-        if (upgradesList["Cutter"]?.numberOwned)! > 0 && cookLock.isHidden == false {
+        if (pizzaBrain.upgradesList["Cutter"]?.numberOwned)! > 0 && cookLock.isHidden == false {
             cookLock.isHidden = true
             numberOfCook.isHidden = false
         }
@@ -146,74 +122,61 @@ class ViewController: UIViewController {
     }
     
     @objc func makePizzasAutomatically() {
-        numOfPizzas += 1
-        numOfPizzasLabel.text = "\(numOfPizzas) Pizzas!"
-    }
-    
-    func updateTimer() {
-        timer.invalidate()
-        if pizzaPerSec > 0 {
-            timer = Timer.scheduledTimer(timeInterval: 1.0/Double(pizzaPerSec), target: self, selector: #selector(makePizzasAutomatically), userInfo: nil, repeats: true)
-        }
+        pizzaBrain.incrementNumOfPizzasAutomatically()
+        numOfPizzasLabel.text = "\(pizzaBrain.getNumOfPizzas()) Pizzas!"
     }
     
     @objc func calculateSpeed() {
-        pizzaPerSecLabel.text = "\(String(pizzaPerSec + clicksPerSecond*pointsPerClick)) / sec"
-        averageClicksPerSecond += Double(Double(clicksPerSecond)/3.0)
-        clicksPerSecond = 0
+        pizzaPerSecLabel.text = pizzaBrain.generatePizzaPerSecLabel()
+        pizzaBrain.calculateAverageClicksPerSecond()
     }
     
     @objc func checkSpeed() {
-        if averageClicksPerSecond < 4 && (pointsPerClick == 2 || pointsPerClick == 1) {
-            pointsPerClick = 1
-        } else if averageClicksPerSecond < 6 {
-            pointsPerClick = 2
+        if pizzaBrain.getAverageClicksPerSecond() < 4 && (pizzaBrain.getPointsPerClick() == 2 || pizzaBrain.getPointsPerClick() == 1) {
+            pizzaBrain.setPointsPerClick(value: 1)
+        } else if pizzaBrain.getAverageClicksPerSecond() < 6 {
+            pizzaBrain.setPointsPerClick(value: 2)
             stopFire()
-        } else if averageClicksPerSecond >= 6 && pointsPerClick == 1 {
-            pointsPerClick = 2
-        } else if averageClicksPerSecond >= 6 && pointsPerClick == 2 {
-            pointsPerClick = 3
+        } else if pizzaBrain.getAverageClicksPerSecond() >= 6 && pizzaBrain.getPointsPerClick() == 1 {
+            pizzaBrain.setPointsPerClick(value: 2)
+        } else if pizzaBrain.getAverageClicksPerSecond() >= 6 && pizzaBrain.getPointsPerClick() == 2 {
+            pizzaBrain.setPointsPerClick(value: 3)
             startFire()
         }
         
-        averageClicksPerSecond = 0
+        pizzaBrain.setAverageClicksPerSecond(value: 0)
         
     }
     
     func startFire() {
-        if !fireIsOn {
-            fireTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(animateFire), userInfo: nil, repeats: true)
+        if !pizzaBrain.getFireIsOn() {
+            pizzaBrain.fireTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(animateFire), userInfo: nil, repeats: true)
             self.fireHeight.constant = 230
             UIView.animate(withDuration: 1) {
                 self.view.layoutIfNeeded()
             } completion: { (_) in
-                self.fireIsOn = true
+                self.pizzaBrain.setFireIsOn(value: true)
             }
         }
     }
     
     func stopFire() {
-        if fireIsOn {
+        if pizzaBrain.getFireIsOn() {
             self.fireHeight.constant = 1
             UIView.animate(withDuration: 2) {
                 self.view.layoutIfNeeded()
             } completion: { (_) in
                 self.fireHeight.constant = 0
                 self.view.layoutIfNeeded()
-                self.fireIsOn = false
-                self.fireTimer.invalidate()
+                self.pizzaBrain.setFireIsOn(value: false)
+                self.pizzaBrain.fireTimer.invalidate()
             }
         }
     }
     
     @objc func animateFire() {
-        if currentFireImage < 2 {
-            currentFireImage += 1
-        } else {
-            currentFireImage = 0
-        }
-        
-        fire.image = fireImages[currentFireImage]
+        pizzaBrain.calculateCurrentFireImage()
+        fire.image = pizzaBrain.getFireImage()
     }
     
     @objc func rotateRays() {
@@ -240,7 +203,7 @@ class ViewController: UIViewController {
         let screenWidth = Int(self.view.frame.size.width)
         let screenHeight = Int(self.view.frame.size.height)
         let label = UILabel()
-        label.text = "+\(pointsPerClick)"
+        label.text = "+\(pizzaBrain.getPointsPerClick())"
         label.frame = CGRect(x: Int.random(in: (screenWidth/2)-145 ... (screenWidth/2)+55), y: Int.random(in: (screenHeight/2)-140 ... (screenHeight/2)+40), width: 90, height: 80)
         label.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         label.font = UIFont(name: "Snell Roundhand Bold", size: 70)

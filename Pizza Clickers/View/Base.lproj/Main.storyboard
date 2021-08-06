@@ -484,11 +484,89 @@
                         <outlet property="pizzaHeight" destination="WQW-6U-par" id="TrV-Dw-XDl"/>
                         <outlet property="pizzaPerSecLabel" destination="n53-Dt-oka" id="U7M-IH-7k0"/>
                         <outlet property="pizzaWidth" destination="zoQ-Sb-Z7F" id="6qP-dg-myR"/>
+                        <segue destination="A7m-zh-CJU" kind="show" identifier="showPizzasMadeInBackground" id="4Mb-vG-GAc"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="137.68115942028987" y="123.88392857142857"/>
+        </scene>
+        <!--Pizzas Made In Background-->
+        <scene sceneID="fCl-se-qSc">
+            <objects>
+                <viewController id="A7m-zh-CJU" customClass="PizzasMadeInBackground" customModule="Pizza_Clickers" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5mH-qt-d67">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="7SX-kU-n3k">
+                                <rect key="frame" x="62" y="221" width="290" height="400"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xlO-rg-aOX">
+                                        <rect key="frame" x="0.0" y="0.0" width="290" height="100"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="100" id="4uJ-SL-rBg"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SnellRoundhand" family="Snell Roundhand" pointSize="75"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="pizzas made while you were gone!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D7o-mX-QQw">
+                                        <rect key="frame" x="0.0" y="100" width="290" height="120"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="120" id="n4n-ml-5v6"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" name="SnellRoundhand" family="Snell Roundhand" pointSize="40"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="djm-Nv-YtD">
+                                        <rect key="frame" x="0.0" y="220" width="290" height="180"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mh5-wk-sXX">
+                                                <rect key="frame" x="55" y="45" width="180" height="90"/>
+                                                <color key="backgroundColor" red="0.9675070643" green="0.090189822020000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="90" id="naq-AX-yX4"/>
+                                                    <constraint firstAttribute="width" constant="180" id="zDe-DJ-dTL"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name="SnellRoundhand" family="Snell Roundhand" pointSize="30"/>
+                                                <state key="normal" title="Make more!">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="makeMore:" destination="A7m-zh-CJU" eventType="touchUpInside" id="Qbo-Mu-qSx"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="180" id="LKV-LK-jtO"/>
+                                            <constraint firstItem="mh5-wk-sXX" firstAttribute="centerX" secondItem="djm-Nv-YtD" secondAttribute="centerX" id="gBw-eu-1y5"/>
+                                            <constraint firstItem="mh5-wk-sXX" firstAttribute="centerY" secondItem="djm-Nv-YtD" secondAttribute="centerY" id="oTB-Cu-nAX"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="290" id="Neb-4D-oHZ"/>
+                                    <constraint firstAttribute="height" constant="400" id="aRY-vD-gp4"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="MgO-gS-bKe"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.74803323303626867" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="7SX-kU-n3k" firstAttribute="centerY" secondItem="5mH-qt-d67" secondAttribute="centerY" id="HqK-w7-ntl"/>
+                            <constraint firstItem="7SX-kU-n3k" firstAttribute="centerX" secondItem="5mH-qt-d67" secondAttribute="centerX" id="IYw-jh-XX9"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Jkb-xc-ybc"/>
+                    <connections>
+                        <outlet property="pizzasMadeInBackgroundLabel" destination="xlO-rg-aOX" id="scv-IP-iec"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cFf-xB-c1X" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="949.27536231884062" y="123.88392857142857"/>
         </scene>
     </scenes>
     <resources>

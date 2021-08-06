@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Upgrade {
+class Upgrade: Encodable, Decodable {
     var numberOwned: Int?
     var initialPrice: Int?
     var currentPrice: Int?

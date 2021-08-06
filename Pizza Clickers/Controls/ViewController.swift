@@ -10,6 +10,10 @@ import UIKit
 class ViewController: UIViewController {
     
     var pizzaBrain = PizzaBrain()
+    
+//    var theViewController = ViewController()
+//    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
 
 
     // Top Outlets
@@ -50,7 +54,28 @@ class ViewController: UIViewController {
         pizzaBrain.speedKeeperTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(calculateSpeed), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: 0.03, target: self, selector: #selector(rotateRays), userInfo: nil, repeats: true)
         Timer.scheduledTimer(timeInterval: 4, target: self, selector: #selector(raysAnimation), userInfo: nil, repeats: true)
+        
+        numOfPizzasLabel.text = "\(pizzaBrain.getNumOfPizzas()) Pizzas!"
+        updateUI()
+        
+        if pizzaBrain.getPizzaPerSec() > 0 {
+            pizzaBrain.timer = Timer.scheduledTimer(timeInterval: 1.0/Double(pizzaBrain.getPizzaPerSec()), target: self, selector: #selector(makePizzasAutomatically), userInfo: nil, repeats: true)
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { (notification) in
+            self.pizzaBrain.saveData()
+        }
+        
+//        self.performSegue(withIdentifier: "showPizzasMadeInBackground", sender: self)
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if pizzaBrain.getPizzaPerSec() > 0 && Int(pizzaBrain.getPizzasMadeInBackground()) ?? 0 > 0 {
+            self.performSegue(withIdentifier: "showPizzasMadeInBackground", sender: self)
+        }
+    }
+    
+    
 
     @IBAction func pizzaPressed(_ sender: UIButton) {
         pizzaBrain.incrementNumOfPizzasByClick()
@@ -86,34 +111,34 @@ class ViewController: UIViewController {
         numOfPizzasLabel.text = "\(pizzaBrain.getNumOfPizzas()) Pizzas!"
         pizzaPerSecLabel.text = pizzaBrain.generatePizzaPerSecLabel()
         
-        numberOfMammaMia.text = String((pizzaBrain.upgradesList["MammaMia"]?.numberOwned)!)
+        numberOfMammaMia.text = String((pizzaBrain.upgradesList?["MammaMia"]?.numberOwned)!)
         
-        if String((pizzaBrain.upgradesList["MammaMia"]?.currentPrice)!).count > 3 {
-            mammaMiaPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList["MammaMia"]?.currentPrice ?? 0))/1000.0))k"
+        if String((pizzaBrain.upgradesList?["MammaMia"]?.currentPrice)!).count > 3 {
+            mammaMiaPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList?["MammaMia"]?.currentPrice ?? 0))/1000.0))k"
         } else {
-            mammaMiaPriceLabel.text = String((pizzaBrain.upgradesList["MammaMia"]?.currentPrice)!)
+            mammaMiaPriceLabel.text = String((pizzaBrain.upgradesList?["MammaMia"]?.currentPrice)!)
         }
         
-        numberOfCutters.text = String((pizzaBrain.upgradesList["Cutter"]?.numberOwned)!)
-        if String((pizzaBrain.upgradesList["Cutter"]?.currentPrice)!).count > 3 {
-            cutterPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList["Cutter"]?.currentPrice ?? 0))/1000.0))k"
+        numberOfCutters.text = String((pizzaBrain.upgradesList?["Cutter"]?.numberOwned)!)
+        if String((pizzaBrain.upgradesList?["Cutter"]?.currentPrice)!).count > 3 {
+            cutterPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList?["Cutter"]?.currentPrice ?? 0))/1000.0))k"
         } else {
-            cutterPriceLabel.text = String((pizzaBrain.upgradesList["Cutter"]?.currentPrice)!)
+            cutterPriceLabel.text = String((pizzaBrain.upgradesList?["Cutter"]?.currentPrice)!)
         }
         
-        numberOfCook.text = String((pizzaBrain.upgradesList["Cook"]?.numberOwned)!)
-        if String((pizzaBrain.upgradesList["Cook"]?.currentPrice)!).count > 3 {
-            cookPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList["Cook"]?.currentPrice ?? 0))/1000.0))k"
+        numberOfCook.text = String((pizzaBrain.upgradesList?["Cook"]?.numberOwned)!)
+        if String((pizzaBrain.upgradesList?["Cook"]?.currentPrice)!).count > 3 {
+            cookPriceLabel.text = "\(String(format: "%.1f",(Double(pizzaBrain.upgradesList?["Cook"]?.currentPrice ?? 0))/1000.0))k"
         } else {
-            cookPriceLabel.text = String((pizzaBrain.upgradesList["Cook"]?.currentPrice)!)
+            cookPriceLabel.text = String((pizzaBrain.upgradesList?["Cook"]?.currentPrice)!)
         }
         
-        if (pizzaBrain.upgradesList["MammaMia"]?.numberOwned)! > 0 && cutterLock.isHidden == false {
+        if (pizzaBrain.upgradesList?["MammaMia"]?.numberOwned)! > 0 && cutterLock.isHidden == false {
             cutterLock.isHidden = true
             numberOfCutters.isHidden = false
         }
         
-        if (pizzaBrain.upgradesList["Cutter"]?.numberOwned)! > 0 && cookLock.isHidden == false {
+        if (pizzaBrain.upgradesList?["Cutter"]?.numberOwned)! > 0 && cookLock.isHidden == false {
             cookLock.isHidden = true
             numberOfCook.isHidden = false
         }
@@ -220,12 +245,16 @@ class ViewController: UIViewController {
         } completion: { (_) in
             label.removeFromSuperview()
         }
-
-        
     }
     
-    
-    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showPizzasMadeInBackground" {
+            let destinationVC = segue.destination as! PizzasMadeInBackground
+            destinationVC.pizzasMadeInBackground = pizzaBrain.getPizzasMadeInBackground()
+            
+        }
+    }
+
     
 }
 

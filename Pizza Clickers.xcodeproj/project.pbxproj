@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		02180B8B2697DA260074DF9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02180B8A2697DA260074DF9B /* Assets.xcassets */; };
+		026B0AE926B366F100E90DBD /* PizzasMadeInBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B0AE826B366F100E90DBD /* PizzasMadeInBackground.swift */; };
 		026E0A4B2696A83D003AD3E0 /* Upgrade.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026E0A4A2696A83D003AD3E0 /* Upgrade.swift */; };
 		02713716268FB969005CC7D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02713715268FB969005CC7D9 /* AppDelegate.swift */; };
 		02713718268FB969005CC7D9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02713717268FB969005CC7D9 /* SceneDelegate.swift */; };
@@ -19,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		02180B8A2697DA260074DF9B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		026B0AE826B366F100E90DBD /* PizzasMadeInBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PizzasMadeInBackground.swift; sourceTree = "<group>"; };
 		026E0A4A2696A83D003AD3E0 /* Upgrade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Upgrade.swift; sourceTree = "<group>"; };
 		02713712268FB969005CC7D9 /* Pizza Clickers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pizza Clickers.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		02713715268FB969005CC7D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +47,7 @@
 			isa = PBXGroup;
 			children = (
 				02713719268FB969005CC7D9 /* ViewController.swift */,
+				026B0AE826B366F100E90DBD /* PizzasMadeInBackground.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -167,6 +170,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				026B0AE926B366F100E90DBD /* PizzasMadeInBackground.swift in Sources */,
 				026E0A4B2696A83D003AD3E0 /* Upgrade.swift in Sources */,
 				0271371A268FB969005CC7D9 /* ViewController.swift in Sources */,
 				02713716268FB969005CC7D9 /* AppDelegate.swift in Sources */,
